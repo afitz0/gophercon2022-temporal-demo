@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package gopherpizza.pizza.api.vi;
+package gopherpizza.pizza.api.v1;
+
+option go_package = "gopherpizza.api";
 
 enum Crust {
     CRUST_NORMAL = 0;
