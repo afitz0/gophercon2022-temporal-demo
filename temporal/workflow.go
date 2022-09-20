@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"context"
@@ -10,9 +10,6 @@ import (
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 )
-
-type Order struct{}
-type OrderStatus struct{}
 
 /* Pseudocode:
 
@@ -46,7 +43,7 @@ PizzaWorkflow(order):
   deliver()
 */
 
-func Workflow(ctx workflow.Context, o Order) error {
+func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	retryPolicy := &temporal.RetryPolicy{
 		InitialInterval:        time.Second,
 		BackoffCoefficient:     2,
@@ -62,44 +59,35 @@ func Workflow(ctx workflow.Context, o Order) error {
 
 	log := workflow.GetLogger(ctx)
 
-	err := workflow.ExecuteActivity(ctx, CreateOrder, o).Get(ctx, &o)
-	if err != nil {
-		log.Error("CreateOrder failed", "Err", err)
-		return err
-	}
+	activities := []interface{}{ValidateOrder, PreparePizza, BakePizza, Deliver}
 
-	var status OrderStatus
-	err = workflow.ExecuteActivity(ctx, FulfillOrder, o).Get(ctx, &status)
-	if err != nil {
-		log.Error("FulfillOrder failed", "Err", err)
-		return err
-	}
-
-	err = workflow.ExecuteActivity(ctx, ArchiveOrder, o, status).Get(ctx, nil)
-	if err != nil {
-		log.Error("ArchiveOrder failed", "Err", err)
-		return err
+	for _, act := range activities {
+		err := workflow.ExecuteActivity(ctx, act, o).Get(ctx, &o)
+		if err != nil {
+			log.Error("Step failed", "Err", err)
+			return err
+		}
 	}
 
 	return nil
 }
 
-func ValidateOrder(ctx context.Context, o Order) (Order, error) {
+func ValidateOrder(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
 	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
 	return o, nil
 }
 
-func PreparePizza(ctx context.Context, o Order) (OrderStatus, error) {
+func PreparePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
 	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
-	return OrderStatus{}, nil
+	return o, nil
 }
 
-func BakePizza(ctx context.Context, o Order) error {
+func BakePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
 	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
-	return nil
+	return o, nil
 }
 
-func Deliver(ctx context.Context, o Order) error {
+func Deliver(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
 	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
-	return nil
+	return o, nil
 }
