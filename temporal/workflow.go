@@ -51,7 +51,7 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	retryPolicy := &temporal.RetryPolicy{
 		InitialInterval:        time.Second,
 		BackoffCoefficient:     2,
-		MaximumInterval:        10 * time.Second,
+		MaximumInterval:        time.Duration(ACTIVITY_MOCK_DURATION_SEC) * time.Second,
 		MaximumAttempts:        100,
 		NonRetryableErrorTypes: []string{},
 	}
