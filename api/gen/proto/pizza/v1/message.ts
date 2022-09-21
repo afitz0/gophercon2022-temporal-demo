@@ -172,6 +172,7 @@ export interface PizzaOrderInfo {
 export interface PizzaOrderStatus {
   status: OrderStatus;
   order: PizzaOrderInfo | undefined;
+  runId: string;
 }
 
 function createBasePizzaOrderInfo(): PizzaOrderInfo {
@@ -255,7 +256,7 @@ export const PizzaOrderInfo = {
 };
 
 function createBasePizzaOrderStatus(): PizzaOrderStatus {
-  return { status: 0, order: undefined };
+  return { status: 0, order: undefined, runId: "" };
 }
 
 export const PizzaOrderStatus = {
@@ -265,6 +266,9 @@ export const PizzaOrderStatus = {
     }
     if (message.order !== undefined) {
       PizzaOrderInfo.encode(message.order, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.runId !== "") {
+      writer.uint32(26).string(message.runId);
     }
     return writer;
   },
@@ -282,6 +286,9 @@ export const PizzaOrderStatus = {
         case 2:
           message.order = PizzaOrderInfo.decode(reader, reader.uint32());
           break;
+        case 3:
+          message.runId = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -294,6 +301,7 @@ export const PizzaOrderStatus = {
     return {
       status: isSet(object.status) ? orderStatusFromJSON(object.status) : 0,
       order: isSet(object.order) ? PizzaOrderInfo.fromJSON(object.order) : undefined,
+      runId: isSet(object.runId) ? String(object.runId) : "",
     };
   },
 
@@ -301,6 +309,7 @@ export const PizzaOrderStatus = {
     const obj: any = {};
     message.status !== undefined && (obj.status = orderStatusToJSON(message.status));
     message.order !== undefined && (obj.order = message.order ? PizzaOrderInfo.toJSON(message.order) : undefined);
+    message.runId !== undefined && (obj.runId = message.runId);
     return obj;
   },
 
@@ -310,6 +319,7 @@ export const PizzaOrderStatus = {
     message.order = (object.order !== undefined && object.order !== null)
       ? PizzaOrderInfo.fromPartial(object.order)
       : undefined;
+    message.runId = object.runId ?? "";
     return message;
   },
 };

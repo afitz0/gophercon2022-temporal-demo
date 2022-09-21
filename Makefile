@@ -6,10 +6,9 @@ PROTO_FILES = $(shell find $(PROTO_DIR) -name "*.proto")
 GO_OUT := temporal/api
 DART_OUT := frontend/lib/gen
 
+TS_PLUGIN := /Users/fitz/.nvm/versions/node/v16.16.0/bin/protoc-gen-ts_proto
 TS_DIR := ./api
-TS_PLUGIN := $(TS_DIR)/node_modules/.bin/protoc-gen-ts_proto
 TS_OUT := $(TS_DIR)/gen
-
 
 go-proto:
 	protoc --go_out $(GO_OUT) $(PROTO_FILES)

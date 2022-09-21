@@ -5,6 +5,8 @@ import (
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+
+	"gopherpizza/app"
 )
 
 func main() {
@@ -16,11 +18,11 @@ func main() {
 
 	w := worker.New(c, "gopherpizza", worker.Options{})
 
-	w.RegisterWorkflow(PizzaWorkflow)
-	w.RegisterActivity(ValidateOrder)
-	w.RegisterActivity(PreparePizza)
-	w.RegisterActivity(BakePizza)
-	w.RegisterActivity(Deliver)
+	w.RegisterWorkflow(app.PizzaWorkflow)
+	w.RegisterActivity(app.ValidateOrder)
+	w.RegisterActivity(app.PreparePizza)
+	w.RegisterActivity(app.BakePizza)
+	w.RegisterActivity(app.Deliver)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

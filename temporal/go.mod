@@ -1,4 +1,4 @@
-module gopherpizza
+module gopherpizza/app
 
 go 1.18
 

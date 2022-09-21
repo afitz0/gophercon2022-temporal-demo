@@ -70,8 +70,9 @@ const PizzaOrderStatus$json = const {
   '2': const [
     const {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.gopherpizza.pizza.api.v1.OrderStatus', '10': 'status'},
     const {'1': 'order', '3': 2, '4': 1, '5': 11, '6': '.gopherpizza.pizza.api.v1.PizzaOrderInfo', '10': 'order'},
+    const {'1': 'runId', '3': 3, '4': 1, '5': 9, '10': 'runId'},
   ],
 };
 
 /// Descriptor for `PizzaOrderStatus`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List pizzaOrderStatusDescriptor = $convert.base64Decode('ChBQaXp6YU9yZGVyU3RhdHVzEj0KBnN0YXR1cxgBIAEoDjIlLmdvcGhlcnBpenphLnBpenphLmFwaS52MS5PcmRlclN0YXR1c1IGc3RhdHVzEj4KBW9yZGVyGAIgASgLMiguZ29waGVycGl6emEucGl6emEuYXBpLnYxLlBpenphT3JkZXJJbmZvUgVvcmRlcg==');
+final $typed_data.Uint8List pizzaOrderStatusDescriptor = $convert.base64Decode('ChBQaXp6YU9yZGVyU3RhdHVzEj0KBnN0YXR1cxgBIAEoDjIlLmdvcGhlcnBpenphLnBpenphLmFwaS52MS5PcmRlclN0YXR1c1IGc3RhdHVzEj4KBW9yZGVyGAIgASgLMiguZ29waGVycGl6emEucGl6emEuYXBpLnYxLlBpenphT3JkZXJJbmZvUgVvcmRlchIUCgVydW5JZBgDIAEoCVIFcnVuSWQ=');

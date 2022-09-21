@@ -100,6 +100,7 @@ class PizzaOrderStatus extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PizzaOrderStatus', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'gopherpizza.pizza.api.v1'), createEmptyInstance: create)
     ..e<OrderStatus>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: OrderStatus.ORDER_RECEIVED, valueOf: OrderStatus.valueOf, enumValues: OrderStatus.values)
     ..aOM<PizzaOrderInfo>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'order', subBuilder: PizzaOrderInfo.create)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'runId', protoName: 'runId')
     ..hasRequiredFields = false
   ;
 
@@ -107,6 +108,7 @@ class PizzaOrderStatus extends $pb.GeneratedMessage {
   factory PizzaOrderStatus({
     OrderStatus? status,
     PizzaOrderInfo? order,
+    $core.String? runId,
   }) {
     final _result = create();
     if (status != null) {
@@ -114,6 +116,9 @@ class PizzaOrderStatus extends $pb.GeneratedMessage {
     }
     if (order != null) {
       _result.order = order;
+    }
+    if (runId != null) {
+      _result.runId = runId;
     }
     return _result;
   }
@@ -157,5 +162,14 @@ class PizzaOrderStatus extends $pb.GeneratedMessage {
   void clearOrder() => clearField(2);
   @$pb.TagNumber(2)
   PizzaOrderInfo ensureOrder() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.String get runId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set runId($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasRunId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearRunId() => clearField(3);
 }
 

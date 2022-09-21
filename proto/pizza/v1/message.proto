@@ -39,4 +39,5 @@ message PizzaOrderInfo {
 message PizzaOrderStatus {
     OrderStatus status = 1;
     PizzaOrderInfo order = 2;
+    string runId = 3;
 }

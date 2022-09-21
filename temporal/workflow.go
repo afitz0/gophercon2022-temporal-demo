@@ -1,11 +1,11 @@
-package main
+package app
 
 import (
 	"context"
 	"math/rand"
 	"time"
 
-	gopherpizza "gopherpizza/api/gopherpizza.api"
+	gopherpizza "gopherpizza/app/api/gopherpizza.api"
 
 	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
@@ -43,6 +43,10 @@ PizzaWorkflow(order):
   deliver()
 */
 
+var buildStatus gopherpizza.OrderStatus = gopherpizza.OrderStatus_ORDER_RECEIVED
+
+const ACTIVITY_MOCK_DURATION_SEC int = 60
+
 func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	retryPolicy := &temporal.RetryPolicy{
 		InitialInterval:        time.Second,
@@ -59,6 +63,23 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 
 	log := workflow.GetLogger(ctx)
 
+	err := workflow.SetQueryHandler(ctx, "getOrderStatus",
+		func() (*gopherpizza.PizzaOrderStatus, error) {
+			log.Debug("Query for order status received.")
+			runId := workflow.GetInfo(ctx).WorkflowExecution.RunID
+			status := &gopherpizza.PizzaOrderStatus{
+				Status: buildStatus,
+				RunId:  runId,
+				Order:  o,
+			}
+
+			return status, nil
+		})
+	if err != nil {
+		log.Error("SetQueryHandler failed.", "Error", err)
+		return err
+	}
+
 	activities := []interface{}{ValidateOrder, PreparePizza, BakePizza, Deliver}
 
 	for _, act := range activities {
@@ -73,21 +94,26 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 }
 
 func ValidateOrder(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
+	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
 	return o, nil
 }
 
 func PreparePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
+	buildStatus = gopherpizza.OrderStatus_ORDER_PREPARING
+	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
 	return o, nil
 }
 
 func BakePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
+	buildStatus = gopherpizza.OrderStatus_ORDER_BAKING
+	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
+	buildStatus = gopherpizza.OrderStatus_ORDER_PENDING_PICKUP
 	return o, nil
 }
 
 func Deliver(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(10)))
+	buildStatus = gopherpizza.OrderStatus_ORDER_OUT_FOR_DELIVERY
+	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
+	buildStatus = gopherpizza.OrderStatus_ORDER_DELIVERED
 	return o, nil
 }

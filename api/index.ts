@@ -6,12 +6,20 @@ import fs from 'fs';
 import {v4 as uuidv4} from 'uuid';
 
 import {Connection, WorkflowClient} from "@temporalio/client";
-import { defineQuery } from "@temporalio/workflow";
+import {defineQuery} from "@temporalio/workflow";
+
+//import {PizzaOrderInfo, PizzaOrderStatus, OrderStatus} from './root';
+import gopherpizza from './root';
+import p = gopherpizza.gopherpizza.pizza.api.v1;
+
+//import * as pizza from './gen/proto/pizza/v1/message';
+
+const ID_DELIM = '--';
 
 const certPath = '/Users/fitz/src/andr-fitzgibbon.pem';
 const keyPath = '/Users/fitz/src/andr-fitzgibbon.key';
 
-const statusQuery = defineQuery('getBuildStatus');
+const statusQuery = defineQuery('getOrderStatus');
 
 const CLOUD_CONNECTION_OPTS = {
     address: "andr-fitzgibbon.temporal-dev.tmprl.cloud",
@@ -30,76 +38,58 @@ const LOCAL_CONNECTION_OPTS = {
 const CONNECTION_OPTS = LOCAL_CONNECTION_OPTS;
 const NAMESPACE = CONNECTION_OPTS === CLOUD_CONNECTION_OPTS ? "andr-fitzgibbon.temporal-dev" : "default";
 
-interface StatusQueryResult {
-    currentStage: string,
-    isDone: boolean,
-}
-
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/listWorkflows', async (req: Request, res: Response) => {
-    let response = await checkWorkflows();
-    res.json(response)
+app.post('/orderPizza', async (req: Request, res: Response) => {
+    const order: p.PizzaOrderInfo = p.PizzaOrderInfo.create(req.body);
+    //const order = pizza.PizzaOrderInfo.fromJSON(req.body);
+    let response = await orderPizza(order);
+    res.json(response.toJSON());
 });
 
-app.post('/startBuild', async (req: Request, res: Response) => {
-    const params = req.body;
-
-    const run = await startBuild();
-    res.json({
-        'runId': run.firstExecutionRunId,
-        'workflowId': run.workflowId,
-    });
+app.post('/orderStatus', async (req: Request, res: Response) => {
+    const order: p.PizzaOrderStatus = p.PizzaOrderStatus.create(req.body);
+    let response = await orderStatus(order);
+    res.json(response.toJSON());
 });
 
-app.get('/workflowStatus/:workflowId/:runId', async (req: Request, res: Response) => {
-    const runId = req.params['runId'];
-    const workflowId = req.params['workflowId'];
-    const status = await workflowStatus(workflowId, runId);
-
-    res.json(status);
-});
-
-const checkWorkflows = async () => {
+const orderPizza = async (order: p.PizzaOrderInfo) => {
     const connection = await Connection.connect(CONNECTION_OPTS);
     const client = new WorkflowClient({connection, namespace: NAMESPACE});
 
-    let r = new Promise((resolve, reject) => {
-        client.workflowService.listOpenWorkflowExecutions({
-            namespace: NAMESPACE,
-        }, (err, resp) => {
-            if (err === null) {
-                resolve(resp);
-            } else {
-                reject(err);
-            }
-        });
+    // append uuid to client-requested id to ensure unique workflow
+    const id = order.id + ID_DELIM + uuidv4();
+    order.id = id;
+
+    let wf = await client.start('PizzaWorkflow', {
+        args: [order],
+        taskQueue: 'gopherpizza',
+        workflowId: id,
     });
 
-    return r;
-};
-
-const startBuild = async () => {
-    const connection = await Connection.connect(CONNECTION_OPTS);
-    const client = new WorkflowClient({connection, namespace: NAMESPACE});
-    const id = uuidv4();
-
-    return client.start('BuildFullCar', {
-        taskQueue: 'CAR_FACTORY_QUEUE',
-        workflowId: 'build-car-' + id,
+    const stat: p.PizzaOrderStatus = p.PizzaOrderStatus.create({
+        status: p.OrderStatus.ORDER_RECEIVED,
+        order: order,
+        runId: wf.firstExecutionRunId
     });
-};
+    return stat;
+}
 
-const workflowStatus = async (workflowId: string, runId: string): Promise<StatusQueryResult> => {
+const orderStatus = async (order: p.PizzaOrderStatus) => {
     const connection = await Connection.connect(CONNECTION_OPTS);
-    const client = new WorkflowClient({connection, namespace: NAMESPACE});
+    const client = new WorkflowClient({
+        connection, namespace: NAMESPACE, dataConverter: {
+            payloadConverterPath: require.resolve('./payload-converter')
+        }
+    });
 
-    const wf = client.getHandle(workflowId, runId);
-    const status = await wf.query<StatusQueryResult>(statusQuery);
+    // TODO: input validation of given order status
+    const wf = client.getHandle(order.order!.id as string, order.runId);
+    const status = await wf.query<p.PizzaOrderStatus>(statusQuery);
 
     return status;
-};
+}
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT);
