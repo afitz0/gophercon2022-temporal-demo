@@ -9,7 +9,7 @@ import {Connection, WorkflowClient} from "@temporalio/client";
 import {defineQuery} from "@temporalio/workflow";
 
 //import {PizzaOrderInfo, PizzaOrderStatus, OrderStatus} from './root';
-import gopherpizza from './root';
+import gopherpizza from './protos/root';
 import p = gopherpizza.gopherpizza.pizza.api.v1;
 
 //import * as pizza from './gen/proto/pizza/v1/message';
