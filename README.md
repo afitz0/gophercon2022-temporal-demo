@@ -25,3 +25,21 @@ To build and run:
 1. `cd frontend; flutter run -d macos`
 
 Alternatively, see ./run_all.sh
+
+## TODO
+
+** Temporal **
+- [ ] Add interesting business logic
+- [ ] Add chaos
+- [ ] Add artificially created load
+- [ ] Add pathway for "realtime" contribution (i.e., can conference attendees add or modify the workflow live?)
+- [ ] Split out different activities into different task queues, potentially to make chaos more interesting.
+
+** Frontend **
+- [ ] Allow users to submit a custom order and easily keep track of it
+- [ ] Animate or otherwise give life to the randomly created gophers
+- [ ]  ... ?
+
+** Backend/Admin UI **
+- [ ] Create something (is this just the Temporal UI that we refresh periodically?) where we can monitor things like how many pizza orders are current out, successfully delivered, etc.
+
