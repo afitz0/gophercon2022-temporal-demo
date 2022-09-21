@@ -80,7 +80,7 @@ const orderStatus = async (order: p.PizzaOrderStatus) => {
     const connection = await Connection.connect(CONNECTION_OPTS);
     const client = new WorkflowClient({
         connection, namespace: NAMESPACE, dataConverter: {
-            payloadConverterPath: require.resolve('./payload-converter')
+            payloadConverterPath: require.resolve('./protos/payload-converter')
         }
     });
 
