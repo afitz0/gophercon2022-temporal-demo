@@ -80,7 +80,9 @@ const orderStatus = async (order: p.PizzaOrderStatus) => {
         }
     });
 
-    // TODO: input validation of given order status
+    if (order.order == null) {
+        return p.PizzaOrderStatus.create({});
+    }
     const wf = client.getHandle(order.order!.id as string, order.runId);
     const status = await wf.query<p.PizzaOrderStatus>(statusQuery);
 

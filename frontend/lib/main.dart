@@ -179,6 +179,8 @@ class GopherImage extends StatefulWidget {
 }
 
 class _GopherImageState extends State<GopherImage> {
+  bool _inProgress = true;
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -208,6 +210,15 @@ class _GopherImageState extends State<GopherImage> {
                             AsyncSnapshot<pizza.PizzaOrderStatus> snapshot) {
                           if (snapshot.hasData) {
                             widget.pizzaOrder.orderStatus = snapshot.data!;
+                            if (widget.pizzaOrder.orderStatus.status ==
+                                pizza.OrderStatus.ORDER_DELIVERED) {
+                              WidgetsBinding.instance
+                                  .addPostFrameCallback((timeStamp) {
+                                setState(() {
+                                  _inProgress = false;
+                                });
+                              });
+                            }
                             return Text(
                                 "Status: ${snapshot.data!.status.toString()}");
                           } else {
@@ -233,7 +244,11 @@ class _GopherImageState extends State<GopherImage> {
               },
             );
           },
-          child: Image.asset('assets/gopher-2.png', height: 50.0)),
+          child: Image.asset(
+              _inProgress
+                  ? 'assets/gopher-sleeping.png'
+                  : 'assets/gopher-2.png',
+              height: 50.0)),
     );
   }
 
