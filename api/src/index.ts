@@ -8,11 +8,8 @@ import {v4 as uuidv4} from 'uuid';
 import {Connection, WorkflowClient} from "@temporalio/client";
 import {defineQuery} from "@temporalio/workflow";
 
-//import {PizzaOrderInfo, PizzaOrderStatus, OrderStatus} from './root';
 import gopherpizza from './protos/root';
 import p = gopherpizza.gopherpizza.pizza.api.v1;
-
-//import * as pizza from './gen/proto/pizza/v1/message';
 
 const ID_DELIM = '--';
 
@@ -43,7 +40,6 @@ app.use(bodyParser.json());
 
 app.post('/orderPizza', async (req: Request, res: Response) => {
     const order: p.PizzaOrderInfo = p.PizzaOrderInfo.create(req.body);
-    //const order = pizza.PizzaOrderInfo.fromJSON(req.body);
     let response = await orderPizza(order);
     res.json(response.toJSON());
 });

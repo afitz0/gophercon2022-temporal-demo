@@ -2,3 +2,4 @@ node_modules
 frontend/build
 *.swp
 logs
+.DS_Store

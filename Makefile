@@ -13,7 +13,8 @@ go-proto:
 	protoc --go_out $(GO_OUT) $(PROTO_FILES)
 
 ts-proto:
-	$(MAKE) -C $(TS_DIR) protos
+	$(MAKE) -C $(TS_DIR) all
 
 dart-proto:
-	protoc --dart_out $(DART_OUT) $(PROTO_FILES)
+	dart pub global activate protoc_plugin
+	export PATH=$(HOME)/.pub-cache/bin:$(PATH); protoc --dart_out $(DART_OUT) $(PROTO_FILES)
