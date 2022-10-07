@@ -80,15 +80,34 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 		return err
 	}
 
-	activities := []interface{}{ValidateOrder, PreparePizza, BakePizza, Deliver}
-
-	for _, act := range activities {
-		err := workflow.ExecuteActivity(ctx, act, o).Get(ctx, &o)
-		if err != nil {
-			log.Error("Step failed", "Err", err)
-			return err
-		}
+	err = workflow.ExecuteActivity(ctx, ValidateOrder, o).Get(ctx, &o)
+	if err != nil {
+		log.Error("Step failed", "Err", err)
+		return err
 	}
+
+	buildStatus = gopherpizza.OrderStatus_ORDER_PREPARING
+	err = workflow.ExecuteActivity(ctx, PreparePizza, o).Get(ctx, &o)
+	if err != nil {
+		log.Error("Step failed", "Err", err)
+		return err
+	}
+
+	buildStatus = gopherpizza.OrderStatus_ORDER_BAKING
+	err = workflow.ExecuteActivity(ctx, BakePizza, o).Get(ctx, &o)
+	if err != nil {
+		log.Error("Step failed", "Err", err)
+		return err
+	}
+	buildStatus = gopherpizza.OrderStatus_ORDER_PENDING_PICKUP
+
+	buildStatus = gopherpizza.OrderStatus_ORDER_OUT_FOR_DELIVERY
+	err = workflow.ExecuteActivity(ctx, Deliver, o).Get(ctx, &o)
+	if err != nil {
+		log.Error("Step failed", "Err", err)
+		return err
+	}
+	buildStatus = gopherpizza.OrderStatus_ORDER_DELIVERED
 
 	return nil
 }
@@ -99,21 +118,16 @@ func ValidateOrder(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherp
 }
 
 func PreparePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	buildStatus = gopherpizza.OrderStatus_ORDER_PREPARING
 	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
 	return o, nil
 }
 
 func BakePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	buildStatus = gopherpizza.OrderStatus_ORDER_BAKING
 	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	buildStatus = gopherpizza.OrderStatus_ORDER_PENDING_PICKUP
 	return o, nil
 }
 
 func Deliver(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	buildStatus = gopherpizza.OrderStatus_ORDER_OUT_FOR_DELIVERY
 	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	buildStatus = gopherpizza.OrderStatus_ORDER_DELIVERED
 	return o, nil
 }
