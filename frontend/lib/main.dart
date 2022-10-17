@@ -248,7 +248,7 @@ class _GopherImageState extends State<GopherImage> {
               _inProgress
                   ? 'assets/gopher-sleeping.png'
                   : 'assets/gopher-2.png',
-              height: 50.0)),
+              height: 100.0)),
     );
   }
 

@@ -2,7 +2,9 @@
     "extends": "@tsconfig/node16/tsconfig.json",
     "compilerOptions": {
         "rootDir": "./src",
-        "outDir": "./lib"
+        "outDir": "./lib",
+        "sourceMap": true,
+        "target": "es2019",
     },
     "include": [
         "src/**/*.ts"
