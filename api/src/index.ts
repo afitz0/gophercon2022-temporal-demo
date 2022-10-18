@@ -49,7 +49,6 @@ app.use(cors());
 app.post('/orderPizza', async (req: Request, res: Response) => {
     const order: p.PizzaOrderInfo = p.PizzaOrderInfo.create(req.body);
     log.info('Got a new order request: ', order);
-    log.error('this is an error');
     let response = await orderPizza(order);
     res.json(response.toJSON());
 });
