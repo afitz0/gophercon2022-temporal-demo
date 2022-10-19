@@ -1,0 +1,15 @@
+FROM golang:1.19 AS builder
+
+ARG CGO_ENABLED=0
+WORKDIR ${GOPATH:-/go}/src/gopherpizza
+
+COPY . .
+
+RUN go mod download
+RUN go get -d -v ./...
+RUN go build -o ${GOPATH:-/go}/bin/ ./worker
+
+FROM gcr.io/distroless/static-debian11
+COPY --from=builder ${GOPATH:-/go}/bin/worker /bin
+
+ENTRYPOINT ["/bin/worker"]
