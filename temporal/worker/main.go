@@ -10,7 +10,9 @@ import (
 )
 
 func main() {
-	c, err := client.NewLazyClient(client.Options{})
+	c, err := client.NewLazyClient(client.Options{
+		HostPort: "host.docker.internal:7233",
+	})
 	if err != nil {
 		log.Fatalln("unable to create Temporal client", err)
 	}
