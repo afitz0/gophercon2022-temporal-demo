@@ -18,3 +18,7 @@ ts-proto:
 dart-proto:
 	dart pub global activate protoc_plugin
 	export PATH=$(HOME)/.pub-cache/bin:$(PATH); protoc --dart_out $(DART_OUT) $(PROTO_FILES)
+
+docker:
+	docker build -t gopherpizza temporal
+	docker build -t gophernode -f api/Dockerfile .
