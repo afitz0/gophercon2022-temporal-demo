@@ -15,7 +15,7 @@ function cleanup() {
     echo -e "Stopping everything, please wait...\n"
     if [ $DO_K8S -eq 1 ]; then
         kubectl delete -f temporal/k8s-worker.yaml 2>&1 >> $LOG_PATH/k8s-worker.log
-        minikub stop
+        minikube stop
         for e in $(minikube -p minikube docker-env 2>&1 | sed -e 's/export \([A-Z_]*\)=.*/\1/g' -e '/#.*/d'); do
             unset $e
         done
