@@ -9,7 +9,7 @@ RUN go mod download
 RUN go get -d -v ./...
 RUN go build -o ${GOPATH:-/go}/bin/ ./worker
 
-FROM gcr.io/distroless/static-debian11
+FROM gcr.io/distroless/base
 COPY --from=builder ${GOPATH:-/go}/bin/worker /bin
 
 ENTRYPOINT ["/bin/worker"]

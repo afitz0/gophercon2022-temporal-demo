@@ -34,6 +34,7 @@ Alternatively, see ./run_all.sh
 - [ ] Add artificially created load
 - [ ] Add pathway for "realtime" contribution (i.e., can conference attendees add or modify the workflow live?)
 - [ ] Split out different activities into different task queues, potentially to make chaos more interesting.
+- [ ] Host workers with docker/k8s
 
 ### Frontend
 - [ ] Allow users to submit a custom order and easily keep track of it

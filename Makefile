@@ -1,4 +1,4 @@
-all: proto
+all: proto docker
 proto: go-proto dart-proto ts-proto
 
 PROTO_DIR := ./proto 
@@ -19,6 +19,16 @@ dart-proto:
 	dart pub global activate protoc_plugin
 	export PATH=$(HOME)/.pub-cache/bin:$(PATH); protoc --dart_out $(DART_OUT) $(PROTO_FILES)
 
-docker:
-	docker build -t gopherpizza temporal
-	docker build -t gophernode -f api/Dockerfile .
+docker: docker-worker docker-node docker-frontend
+
+docker-worker:
+	docker build -t gopher-pizza/temporal-worker temporal
+
+docker-node:
+	docker build -t gopher-pizza/node-api -f api/Dockerfile .
+
+docker-frontend:
+	docker build --build-arg NODE_PORT=$(NODE_PORT) --no-cache -t gopher-pizza/frontend frontend
+
+run: all
+	./run_all.sh

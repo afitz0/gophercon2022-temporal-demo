@@ -16,7 +16,9 @@ const int _newOrderIntervalMax = 4000;
 
 const int _numRandomToppings = 4;
 
-const String apiPrefix = 'http://127.0.0.1:8000';
+const String apiPort =
+    String.fromEnvironment('NODE_PORT', defaultValue: '8000');
+const String apiPrefix = 'http://127.0.0.1:$apiPort';
 
 void main() {
   runApp(const MyApp());
@@ -28,19 +30,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Gopher Pizza Frontend',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

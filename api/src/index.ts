@@ -5,6 +5,7 @@ import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {v4 as uuidv4} from 'uuid';
 import {Logger} from 'tslog';
+import type {TLogLevelName} from 'tslog';
 
 import {Connection, WorkflowClient} from "@temporalio/client";
 import {defineQuery} from "@temporalio/workflow";
@@ -12,7 +13,9 @@ import {defineQuery} from "@temporalio/workflow";
 import gopherpizza from './protos/root';
 import p = gopherpizza.gopherpizza.pizza.api.v1;
 
-const log: Logger = new Logger();
+const log: Logger = new Logger({
+    minLevel: process.env.LOG_LEVEL as TLogLevelName,
+});
 const ID_DELIM = '--';
 
 const statusQuery = defineQuery('getOrderStatus');
@@ -98,6 +101,14 @@ const orderStatus = async (order: p.PizzaOrderStatus) => {
 
     return status;
 }
+
+const end = (s: NodeJS.Signals) => {
+    log.debug(`Caught signal ${s}. Exiting.`);
+    process.exit(0);
+};
+
+process.once('SIGINT', end);
+process.once('SIGTERM', end);
 
 const PORT = process.env.PORT || 8000;
 log.debug('Server listening on port', PORT);
