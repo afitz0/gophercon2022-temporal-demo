@@ -10,21 +10,32 @@ import (
 )
 
 func main() {
-	c, err := client.NewLazyClient(client.Options{
+	tryLocal := false
+
+	c, err := client.Dial(client.Options{
 		HostPort: "host.docker.internal:7233",
 	})
 	if err != nil {
-		log.Fatalln("unable to create Temporal client", err)
+		log.Println("Unable to create Temporal client on Docker network. Falling back to localhost", err)
+		tryLocal = true
 	}
+
+	if tryLocal {
+		c, err = client.Dial(client.Options{
+			HostPort: "127.0.0.1:7233",
+		})
+		if err != nil {
+			log.Fatalln("Unable to create Temporal client", err)
+		}
+	}
+
 	defer c.Close()
 
 	w := worker.New(c, "gopherpizza", worker.Options{})
 
+	a := &app.Activities{}
 	w.RegisterWorkflow(app.PizzaWorkflow)
-	w.RegisterActivity(app.ValidateOrder)
-	w.RegisterActivity(app.PreparePizza)
-	w.RegisterActivity(app.BakePizza)
-	w.RegisterActivity(app.Deliver)
+	w.RegisterActivity(a)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

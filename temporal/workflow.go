@@ -1,8 +1,6 @@
 package app
 
 import (
-	"context"
-	"math/rand"
 	"time"
 
 	gopherpizza "gopherpizza/app/api/gopherpizza.api"
@@ -63,6 +61,8 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 
 	log := workflow.GetLogger(ctx)
 
+	a := &Activities{}
+
 	err := workflow.SetQueryHandler(ctx, "getOrderStatus",
 		func() (*gopherpizza.PizzaOrderStatus, error) {
 			log.Debug("Query for order status received.")
@@ -80,21 +80,21 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 		return err
 	}
 
-	err = workflow.ExecuteActivity(ctx, ValidateOrder, o).Get(ctx, &o)
+	err = workflow.ExecuteActivity(ctx, a.ValidateOrder, a.Order).Get(ctx, nil)
 	if err != nil {
 		log.Error("Step failed", "Err", err)
 		return err
 	}
 
 	buildStatus = gopherpizza.OrderStatus_ORDER_PREPARING
-	err = workflow.ExecuteActivity(ctx, PreparePizza, o).Get(ctx, &o)
+	err = workflow.ExecuteActivity(ctx, a.PreparePizza, a.Order).Get(ctx, nil)
 	if err != nil {
 		log.Error("Step failed", "Err", err)
 		return err
 	}
 
 	buildStatus = gopherpizza.OrderStatus_ORDER_BAKING
-	err = workflow.ExecuteActivity(ctx, BakePizza, o).Get(ctx, &o)
+	err = workflow.ExecuteActivity(ctx, a.BakePizza, a.Order).Get(ctx, nil)
 	if err != nil {
 		log.Error("Step failed", "Err", err)
 		return err
@@ -102,7 +102,7 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	buildStatus = gopherpizza.OrderStatus_ORDER_PENDING_PICKUP
 
 	buildStatus = gopherpizza.OrderStatus_ORDER_OUT_FOR_DELIVERY
-	err = workflow.ExecuteActivity(ctx, Deliver, o).Get(ctx, &o)
+	err = workflow.ExecuteActivity(ctx, a.Deliver, a.Order).Get(ctx, nil)
 	if err != nil {
 		log.Error("Step failed", "Err", err)
 		return err
@@ -110,24 +110,4 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	buildStatus = gopherpizza.OrderStatus_ORDER_DELIVERED
 
 	return nil
-}
-
-func ValidateOrder(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	return o, nil
-}
-
-func PreparePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	return o, nil
-}
-
-func BakePizza(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	return o, nil
-}
-
-func Deliver(ctx context.Context, o *gopherpizza.PizzaOrderInfo) (*gopherpizza.PizzaOrderInfo, error) {
-	time.Sleep(time.Second * time.Duration(rand.Intn(ACTIVITY_MOCK_DURATION_SEC)))
-	return o, nil
 }
