@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y git curl wget unzip
 WORKDIR /root
 ENV PATH ${PATH}:/root/flutter/bin
 RUN git clone --depth 1 -b stable https://github.com/flutter/flutter.git
-RUN flutter precache
+#RUN flutter precache
 
 WORKDIR /app
 COPY . /app

@@ -26,9 +26,10 @@ const statusQuery = defineQuery('getOrderStatus');
 import fs from 'fs';
 const certPath = '/Users/fitz/src/andr-fitzgibbon.pem';
 const keyPath = '/Users/fitz/src/andr-fitzgibbon.key';
+const cloudAddr = 'andr-fitzgibbon.temporal-dev.tmprl.cloud';
 
 const CLOUD_CONNECTION_OPTS = {
-    address: "andr-fitzgibbon.temporal-dev.tmprl.cloud",
+    address: cloudAddr,
     tls: {
         clientCertPair: {
             crt: fs.readFileSync(certPath),
@@ -39,7 +40,7 @@ const CLOUD_CONNECTION_OPTS = {
 */
 
 const LOCAL_CONNECTION_OPTS = {
-    address: "127.0.0.1:7233"
+    address: "host.docker.internal:7233"
 };
 
 const CONNECTION_OPTS = LOCAL_CONNECTION_OPTS;
