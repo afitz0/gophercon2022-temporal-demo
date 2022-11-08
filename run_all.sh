@@ -6,9 +6,9 @@ if [ "$1" == "k8s" ]; then
     DO_K8S=1
 fi
 
-export NODE_PORT=8111
-export FRONT_PORT=8222
-export TMPRL_UI_PORT=8333
+: ${NODE_PORT:=8111}
+: ${FRONT_PORT:=8222}
+: ${TMPRL_UI_PORT:=8333}
 LOG_PATH=$(pwd)/logs
 
 function cleanup() {
@@ -32,8 +32,10 @@ function cleanup() {
 }
 
 mkdir $LOG_PATH 2> /dev/null
-echo "building..."
-make all >> $LOG_PATH/build.log
+if [ $REBUILD -ne 0 ]; then
+    echo "building..."
+    make all >> $LOG_PATH/build.log
+fi
 
 echo "starting temporalite..."
 temporalite start --ui-port $TMPRL_UI_PORT --namespace default --ephemeral >> $LOG_PATH/temporalite.log &

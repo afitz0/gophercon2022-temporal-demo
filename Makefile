@@ -9,6 +9,10 @@ DART_OUT := frontend/lib/gen
 
 TS_DIR := ./api
 
+NODE_PORT := 8111
+FRONT_PORT := 8222
+TMPRL_UI_PORT := 8333
+
 go-proto:
 	protoc --go_out $(GO_OUT) $(PROTO_FILES)
 
@@ -31,4 +35,4 @@ docker-frontend:
 	docker build --build-arg NODE_PORT=$(NODE_PORT) --no-cache -t gopher-pizza/frontend frontend
 
 run: all
-	./run_all.sh
+	REBUILD=0 ./run_all.sh
