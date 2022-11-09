@@ -28,6 +28,17 @@ Alternatively, see ./run_all.sh
 
 ## TODO
 
+### Repo Structure
+
+Overall goal: have multiple checkpoints in this demo that relate to different use-cases or learning journeys.
+
+Possible options:
+- [ ] Plain, self-run everything. Small handful of workers.
+- [ ] Kubernetes-hosted workers. Otherwise happy state.
+- [ ] Introduce chaos. Workers are randomly killed.
+- [ ] Multiple task queues. One activity has special requirements and so we run on its own task queue. Different failure rates for each one. 
+- [ ] Dependant workflows / re-architecture
+
 ### Temporal
 - [ ] Add interesting business logic
 - [ ] Add chaos
