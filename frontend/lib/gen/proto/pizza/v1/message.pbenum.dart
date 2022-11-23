@@ -58,6 +58,7 @@ class OrderStatus extends $pb.ProtobufEnum {
   static const OrderStatus ORDER_PENDING_PICKUP = OrderStatus._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ORDER_PENDING_PICKUP');
   static const OrderStatus ORDER_OUT_FOR_DELIVERY = OrderStatus._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ORDER_OUT_FOR_DELIVERY');
   static const OrderStatus ORDER_DELIVERED = OrderStatus._(5, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ORDER_DELIVERED');
+  static const OrderStatus ORDER_UNKNOWN = OrderStatus._(6, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ORDER_UNKNOWN');
 
   static const $core.List<OrderStatus> values = <OrderStatus> [
     ORDER_RECEIVED,
@@ -66,6 +67,7 @@ class OrderStatus extends $pb.ProtobufEnum {
     ORDER_PENDING_PICKUP,
     ORDER_OUT_FOR_DELIVERY,
     ORDER_DELIVERED,
+    ORDER_UNKNOWN,
   ];
 
   static final $core.Map<$core.int, OrderStatus> _byValue = $pb.ProtobufEnum.initByValue(values);

@@ -27,6 +27,8 @@ enum OrderStatus {
     ORDER_PENDING_PICKUP = 3;
     ORDER_OUT_FOR_DELIVERY = 4;
     ORDER_DELIVERED = 5;
+
+    ORDER_UNKNOWN = 6;
 }
 
 message PizzaOrderInfo {

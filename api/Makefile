@@ -13,4 +13,4 @@ ts: protos
 protos:
 	export PATH=$(PATH):./node_modules/.bin; pbjs -t json-module -w commonjs -o $(OUT_DIR)/json-module.js $(PROTO_FILES) && \
 		pbjs -t static-module $(PROTO_FILES) | pbts -o $(OUT_DIR)/root.d.ts -
-	cp src/protos/root.js $(OUT_DIR)
+	#cp src/protos/root.js $(OUT_DIR)

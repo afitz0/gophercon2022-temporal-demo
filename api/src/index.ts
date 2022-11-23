@@ -10,7 +10,7 @@ import type {TLogLevelName} from 'tslog';
 import {Connection, WorkflowClient} from "@temporalio/client";
 import {defineQuery} from "@temporalio/workflow";
 
-import gopherpizza from './protos/root';
+import gopherpizza from '../lib/protos/root';
 import p = gopherpizza.gopherpizza.pizza.api.v1;
 
 const log: Logger = new Logger({
@@ -39,12 +39,16 @@ const CLOUD_CONNECTION_OPTS = {
 };
 */
 
+const tmplHost: string = !process.env.TEMPORAL_HOST ? "localhost" : process.env.TEMPORAL_HOST;
+const tmplPort: string = !process.env.TEMPORAL_PORT ? "7233" : process.env.TEMPORAL_PORT;
 const LOCAL_CONNECTION_OPTS = {
-    address: "host.docker.internal:7233"
+    address: tmplHost + ":" + tmplPort,
 };
 
 const CONNECTION_OPTS = LOCAL_CONNECTION_OPTS;
 const NAMESPACE = "default";
+
+log.info(`Sending Temporal requests to ${CONNECTION_OPTS.address} in namespace ${NAMESPACE}`);
 
 const app = express();
 app.use(bodyParser.json());
@@ -95,12 +99,19 @@ const orderStatus = async (order: p.PizzaOrderStatus) => {
     });
 
     if (order.order == null) {
-        return p.PizzaOrderStatus.create({});
+        return p.PizzaOrderStatus.create({
+            status: p.OrderStatus.ORDER_UNKNOWN,
+        });
     }
     const wf = client.getHandle(order.order!.id as string, order.runId);
-    const status = await wf.query<p.PizzaOrderStatus>(statusQuery);
+    try {
+        const status = await wf.query<p.PizzaOrderStatus>(statusQuery);
 
-    return status;
+        return status;
+    } catch (e) {
+        order.status = p.OrderStatus.ORDER_UNKNOWN;
+        return order;
+    }
 }
 
 const end = (s: NodeJS.Signals) => {

@@ -46,11 +46,12 @@ const OrderStatus$json = const {
     const {'1': 'ORDER_PENDING_PICKUP', '2': 3},
     const {'1': 'ORDER_OUT_FOR_DELIVERY', '2': 4},
     const {'1': 'ORDER_DELIVERED', '2': 5},
+    const {'1': 'ORDER_UNKNOWN', '2': 6},
   ],
 };
 
 /// Descriptor for `OrderStatus`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List orderStatusDescriptor = $convert.base64Decode('CgtPcmRlclN0YXR1cxISCg5PUkRFUl9SRUNFSVZFRBAAEhMKD09SREVSX1BSRVBBUklORxABEhAKDE9SREVSX0JBS0lORxACEhgKFE9SREVSX1BFTkRJTkdfUElDS1VQEAMSGgoWT1JERVJfT1VUX0ZPUl9ERUxJVkVSWRAEEhMKD09SREVSX0RFTElWRVJFRBAF');
+final $typed_data.Uint8List orderStatusDescriptor = $convert.base64Decode('CgtPcmRlclN0YXR1cxISCg5PUkRFUl9SRUNFSVZFRBAAEhMKD09SREVSX1BSRVBBUklORxABEhAKDE9SREVSX0JBS0lORxACEhgKFE9SREVSX1BFTkRJTkdfUElDS1VQEAMSGgoWT1JERVJfT1VUX0ZPUl9ERUxJVkVSWRAEEhMKD09SREVSX0RFTElWRVJFRBAFEhEKDU9SREVSX1VOS05PV04QBg==');
 @$core.Deprecated('Use pizzaOrderInfoDescriptor instead')
 const PizzaOrderInfo$json = const {
   '1': 'PizzaOrderInfo',

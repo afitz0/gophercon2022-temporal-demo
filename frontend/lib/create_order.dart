@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/gopheria_order.dart';
 import 'package:frontend/pizza_stream.dart';
 import 'package:frontend/pizza_toppings.dart';
+import 'package:multiselect/multiselect.dart';
 
 import './gen/proto/pizza/v1/message.pb.dart' as pizza;
 
@@ -69,18 +70,17 @@ class _CreateOrderFormState extends State<CreateOrderForm> {
   final toppingCtrl = TextEditingController();
   final cheeseCtrl = TextEditingController();
 
+  List<String> selectedToppings = [];
+
   @override
   Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
       child: Column(
-        children: <Widget>[
-          // Add TextFormFields and ElevatedButton here.
+        children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
-              // The validator receives the text that the user has entered.
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Enter a Type of Crust';
@@ -91,6 +91,45 @@ class _CreateOrderFormState extends State<CreateOrderForm> {
                 border: OutlineInputBorder(),
                 hintText: 'Enter a Type of Crust',
               ),
+              controller: crustCtrl,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter Cheese Choice';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter Cheese Choice',
+              ),
+              controller: cheeseCtrl,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropDownMultiSelect(
+              onChanged: (List<String> x) {
+                setState(() {
+                  selectedToppings = x;
+                });
+              },
+              selectedValues: selectedToppings,
+              options: pizzaToppings,
+              whenEmpty: 'Choose toppings',
+              childBuilder: (List<String> items) {
+                String text = items.reduce((a, b) => "$a, $b");
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(10.0, 4.0, 20.0, 4.0),
+                  child: Text(text.length > 80
+                      ? text.replaceRange(80, null, '...')
+                      : text),
+                );
+              },
             ),
           ),
           ElevatedButton(
@@ -106,6 +145,52 @@ class _CreateOrderFormState extends State<CreateOrderForm> {
         ],
       ),
     );
+  }
+}
+
+class CrustDropdown extends StatefulWidget {
+  const CrustDropdown({super.key});
+
+  @override
+  State<CrustDropdown> createState() => _CrustDropdownState();
+}
+
+class _CrustDropdownState extends State<CrustDropdown> {
+  pizza.Crust _selected = pizza.Crust.CRUST_NORMAL;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton(
+      value: _selected,
+      items: dropdownItems,
+      onChanged: (pizza.Crust? newValue) {
+        setState(() {
+          _selected = newValue!;
+        });
+      },
+    );
+  }
+
+  List<DropdownMenuItem<pizza.Crust>> get dropdownItems {
+    List<DropdownMenuItem<pizza.Crust>> menuItems = List.generate(
+      pizza.Crust.values.length,
+      (int index) {
+        pizza.Crust value = pizza.Crust.values[index];
+        String enumName = value.name;
+        enumName.replaceFirst(RegExp(r'CRUST_'), '');
+        enumName.replaceAll(RegExp(r'_'), ' ');
+        enumName.toLowerCase();
+        String textLabel =
+            "${enumName[0].toUpperCase()}${enumName.substring(1)}";
+
+        return DropdownMenuItem(
+          value: value,
+          child: Text(textLabel),
+        );
+      },
+      growable: false,
+    );
+    return menuItems;
   }
 }
 

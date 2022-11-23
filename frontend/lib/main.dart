@@ -3,6 +3,7 @@ import 'package:frontend/pizza_stream.dart';
 import 'package:frontend/gopheria_order.dart';
 import 'package:frontend/gopher_image.dart';
 import 'package:frontend/create_order.dart';
+import 'package:frontend/single_order.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,42 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      //home: const MyHomePage(),
+      home: const Home(),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 0.25 * width),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SingleOrder(),
+                  ),
+                );
+              },
+              child: const Text('Single Order'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Auto Orders'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
