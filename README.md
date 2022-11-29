@@ -8,6 +8,24 @@ There are three components to this app:
 1. Typescript, Node, Express service to intermediate between Temporal and the UI
 1. UI, currently in Flutter
 
+- [GopherPizza](#gopherpizza)
+  * [Building and running](#building-and-running)
+- [Checkpoint 1](#checkpoint-1)
+  * [Intended Usage](#intended-usage)
+  * [Notes](#notes)
+- [Checkpoint 1a](#checkpoint-1a)
+  * [Intended Usage](#intended-usage-1)
+- [Checkpoint 2](#checkpoint-2)
+  * [Intended Usage](#intended-usage-2)
+- [Checkpoint 3](#checkpoint-3)
+  * [Intended Usage](#intended-usage-3)
+  * [Notes](#notes-1)
+- [TODO](#todo)
+  * [Repo Structure](#repo-structure)
+  * [Temporal](#temporal)
+  * [Frontend](#frontend)
+  * [Backend/Admin UI](#backendadmin-ui)
+
 ## Building and running
 
 This was developed with the following on macos:
@@ -24,7 +42,7 @@ To build and run:
 1. `cd temporal; go run worker/main.go`
 1. `cd frontend; flutter run -d macos`
 
-Alternatively, see the `run_all.sh` script.
+Alternatively, see the [`run_all.sh`](./run_all.sh) script.
 
 # Checkpoint 1
 
@@ -33,6 +51,7 @@ Checkpoint 1 is a barebones, but complete, application. There is no fancy logic:
 Within the workflow, the three activities are stubs: each waits a random amount of time and, barring external factors, always succeeds.
 
 The following diagram depicts that process at a high level:
+
 ![Demo's Architecture](images/architecture.png "Architecture Diagram")
 
 ## Intended Usage
@@ -128,9 +147,9 @@ Things to observe and/or point out:
 * The Consumer UI has no notion of "session" or "user." If you restart the app, you get a clean batch of orders. (Meanwhile, the Workflows from the previous instance will happily continue running to completion.)
 
 
-## TODO
+# TODO
 
-### Repo Structure
+## Repo Structure
 
 Overall goal: have multiple checkpoints in this demo that relate to different use-cases or learning journeys.
 
@@ -141,7 +160,7 @@ Possible options:
 - [ ] Multiple task queues. One activity has special requirements and so we run on its own task queue. Different failure rates for each one. 
 - [ ] Dependant workflows / re-architecture
 
-### Temporal
+## Temporal
 - [ ] Add interesting business logic
 - [ ] Add chaos
 - [ ] Add artificially created load
@@ -149,11 +168,11 @@ Possible options:
 - [ ] Split out different activities into different task queues, potentially to make chaos more interesting.
 - [ ] Host workers with docker/k8s
 
-### Frontend
+## Frontend
 - [ ] Allow users to submit a custom order and easily keep track of it
 - [ ] Animate or otherwise give life to the randomly created gophers
 - [ ]  ... ?
 
-### Backend/Admin UI
+## Backend/Admin UI
 - [ ] Create something (is this just the Temporal UI that we refresh periodically?) where we can monitor things like how many pizza orders are current out, successfully delivered, etc.
 
