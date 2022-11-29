@@ -69,6 +69,8 @@ func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	}
 	buildStatus = gopherpizza.OrderStatus_ORDER_PENDING_PICKUP
 
+	// TODO: between these two, something could go wrong. Driver quits. Order is canceled. Any number of edge cases. How do we simulation this?
+
 	buildStatus = gopherpizza.OrderStatus_ORDER_OUT_FOR_DELIVERY
 	err = workflow.ExecuteActivity(ctx, a.Deliver, o).Get(ctx, nil)
 	if err != nil {
