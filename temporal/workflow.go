@@ -11,18 +11,16 @@ import (
 
 var buildStatus gopherpizza.OrderStatus = gopherpizza.OrderStatus_ORDER_RECEIVED
 
-const ACTIVITY_MOCK_DURATION_SEC int = 60
+const ACTIVITY_MOCK_DURATION_SEC int = 10
 
 func PizzaWorkflow(ctx workflow.Context, o *gopherpizza.PizzaOrderInfo) error {
 	retryPolicy := &temporal.RetryPolicy{
-		InitialInterval:        time.Second,
-		BackoffCoefficient:     2,
-		MaximumInterval:        time.Duration(ACTIVITY_MOCK_DURATION_SEC) * time.Second,
-		MaximumAttempts:        100,
-		NonRetryableErrorTypes: []string{},
+		InitialInterval:    time.Second,
+		BackoffCoefficient: 2,
+		MaximumInterval:    time.Duration(ACTIVITY_MOCK_DURATION_SEC) * time.Second,
 	}
 	ao := workflow.ActivityOptions{
-		StartToCloseTimeout: 60 * time.Second,
+		StartToCloseTimeout: time.Duration(ACTIVITY_MOCK_DURATION_SEC) * time.Second,
 		RetryPolicy:         retryPolicy,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
